@@ -4,7 +4,7 @@
 ## FUNZIONALITA'  
 ***********************************************
 
-Nuaviga verso l'url di destinazione -->   DONE
+Naviga verso l'url di destinazione -->   DONE
 
 Compila i campi del form ed effettua la login -->  DONE
 
@@ -17,7 +17,7 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 **************************************************
 ## PREREQUISITI   
 **************************************************
-- Rischiede installazione di nodejs e phantomjs
+- Richiede installazione di nodejs e phantomjs
 
 
 
@@ -27,14 +27,15 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 
 - I parametri url, user, password etc.. vengono passati attraverso il file parametri.json
 
-- ***IMPORTANTE: rinominare il file es_parametri.json in parametri.json  e inserire i valori.
+- <b>***IMPORTANTE: rinominare il file es_parametri.json in parametri.json  e inserire i valori.</b>
 
 - I parametri setting di phantomjs sono nel file config.json per ulteriori informazioni: http://phantomjs.org/api/command-line.html
 
 
 *************************************
-##COMANDO DI ESECUZIONE COME SI ESEGUE
+##COMANDO DI ESECUZIONE
 ************************************
+Per eseguire l'applicazione digitare:
 
 <pre><code>phantomjs --config=config.json fiera.js
 </code></pre>
@@ -46,13 +47,13 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 *************************************
 ##DESCRIZIONE FILE PARAMETRI.JSON
 ************************************
-url = è l'url iniziale da cui parte lo script
+<b>url</b> = è l'url iniziale da cui parte lo script
 
-credenziali.user = username che verrà iserita nella form
+<b>credenziali.user</b> = username che verrà iserita nella form
 
-credenziali.pwd = password che verrà iserita nella form.
+<b>credenziali.pwd</b> = password che verrà iserita nella form.
 
-Url_no_load = Array di valori per escludere il caricamento durante httprequest.
+<b>Url_no_load</b> = Array di valori per escludere il caricamento durante httprequest.
 				per esludere un url basta undicare una parola in esso contenuto:
 				es: se volessimo escludere questo url "www.iosonounindirizzo/articoli/comptuter.html" basta
 				inserire la parola "ndirizzo/artic" oppure "tuter.html".
