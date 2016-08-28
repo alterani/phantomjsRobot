@@ -1,0 +1,32 @@
+{
+  /* Same as: --ignore-ssl-errors=true */
+  "ignoreSslErrors": true,
+
+ 
+  /* --disk-cache=[true|false] enables disk cache (at desktop services cache storage location, default is false). */
+  "diskCacheEnabled": true,
+
+   /* --disk-cache-path specifies the location for the disk cache. */
+  "diskCachePath": "cache",
+
+  /* Same as: --max-disk-cache-size=1000 */
+  "maxDiskCacheSize": 100000,
+
+  /* --cookies-file=/path/to/cookies.txt specifies the file name to store the persistent Cookies */
+  "cookiesFile": "cookies.txt",
+
+
+  /* --web-security=[true|false] enables web security and forbids cross-domain XHR (default is true).*/
+  "webSecurityEnabled": false,
+
+  /*  ignores SSL errors, such as expired or self-signed certificate errors (default is false). */
+  "ignoreSslErrors": true,
+
+  /* load all inlined images (default is true). */
+  "autoLoadImages": false,
+
+  /* --debug=[true|false] prints additional warning and debug message, default is false.  */
+  "printDebugMessages": false
+  
+  /* etc. */
+}

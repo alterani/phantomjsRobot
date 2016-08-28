@@ -1,0 +1,9 @@
+{
+	"url": "http://www.esempiourl.com",
+	"credenziali":{
+					
+					"user": "tuaUser",
+					"pwd": "tuapasswod"
+				  },
+    "Url_no_load": ["yahoo.it","tpc.googlesyndication","googleadservices","googletagservices", "google-analytics.com"]
+}
