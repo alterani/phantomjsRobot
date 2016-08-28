@@ -1,7 +1,7 @@
 #PHANTOMJS SCRIPT
 
 ***********************************************
-# FUNZIONALITA'  
+## FUNZIONALITA'  
 ***********************************************
 
 Nuaviga verso l'url di destinazione -->   DONE
@@ -15,14 +15,14 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 
 
 **************************************************
-# PREREQUISITI   
+## PREREQUISITI   
 **************************************************
 - Rischiede installazione di nodejs e phantomjs
 
 
 
 **************************************************
-# NOTE   
+## NOTE   
 **************************************************
 
 - I parametri url, user, password etc.. vengono passati attraverso il file parametri.json
@@ -33,16 +33,18 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 
 
 *************************************
-#COMANDO DI ESECUZIONE COME SI ESEGUE
+##COMANDO DI ESECUZIONE COME SI ESEGUE
 ************************************
 
-phantomjs --config=config.json fiera.js
+<pre><code>phantomjs --config=config.json fiera.js
+</code></pre>
+
 
 ************************************
 
 
 *************************************
-#DESCRIZIONE FILE PARAMETRI.JSON
+##DESCRIZIONE FILE PARAMETRI.JSON
 ************************************
 url = è l'url iniziale da cui parte lo script
 
