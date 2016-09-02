@@ -17,7 +17,7 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 **************************************************
 ## PREREQUISITI   
 **************************************************
-- Richiede installazione di nodejs e phantomjs
+- Richiede installazione di phantomjs
 
 
 
@@ -37,7 +37,7 @@ Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un d
 ************************************
 Per eseguire l'applicazione digitare:
 
-<pre><code>phantomjs --config=config.json fiera.js
+<pre><code>./phantomjs --config=config.json fiera.js
 </code></pre>
 
 

@@ -1,8 +1,8 @@
 //"use strict";
 
 //Istanzio oggetto page e variabile URL
-var mieUtility = require('c:\\enrico\\js_script\\modulo_utility.js'); // da cambiare path om ambiente linux
-var parametri = require('c:\\enrico\\js_script\\parametri.json'); // da cambiare path om ambiente linux
+var mieUtility = require('/Users/enricoalterani/github/PhantomJs_fiera/modulo_utility.js'); // da cambiare path om ambiente linux
+var parametri = require('/Users/enricoalterani/github/PhantomJs_fiera/parametri.json'); // da cambiare path om ambiente linux
 var system = require('system');
 var page = require('webpage').create();
 var url = parametri.url;
