@@ -62,8 +62,9 @@ page.onLoadFinished = function(status) {
     mieUtility.sleep(12000);
     console.log('end sleep');
 
-    page.evaluate(function(parametri){
-        
+    
+   parametri = page.evaluate(function(parametri){
+            
             
            if ($('#username').length > 0 ) {
                  $('#username').val(parametri.credenziali.user);
@@ -74,6 +75,39 @@ page.onLoadFinished = function(status) {
                     }
                 }
            }
+           else
+           {
+                //Se risulta loggato
+                if($("a[href$='logout.do']").length > 0  )
+                {
+                    
+                    //Step 2 clicca sul tasto di ricerca generico
+                    if($('form[name="frm_search_calendario"]').length > 0 && parametri.step == "1")
+                    {
+                        parametri.step = "2"
+                        $('form[name="frm_search_calendario"]').submit(); 
+                         return parametri;  
+                    }
+                    //Step3 clicca su tutte le aziende
+                    if($('a[href$="/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key="]').length > 0 && parametri.step == "2")
+                    {
+                        parametri.step = "3"
+                        $('a[href$="/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key="]').submit();
+                        return parametri;    
+                    }
+
+                    if(parametri.step == "3")
+                    {
+                        parametri.test = "Fase 4  ";
+                    } 
+                   
+                }    
+           }
+
+           
+           return parametri;
+           
+           //headercenterbottom
           
            /*if ($('#Invia').length > 0 ) {
                  $('#Invia').click();
@@ -81,11 +115,12 @@ page.onLoadFinished = function(status) {
 
     }, parametri);
 
-   
-
+    
     page.render('printscreen.png');
 
     console.log('Creato file printscreen.png');
+
+    console.log("finale parametri.test = " + parametri.test + "STEP = " + parametri.step);
     //phantom.exit();
 };
 
@@ -99,7 +134,7 @@ page.onLoadFinished = function(status) {
 
 page.onResourceError = function(resourceError) {
     
-    if (errore_gestito || resourceError.errorCode == 203 ) {
+    if (errore_gestito || resourceError.errorCode == 203 || resourceError.errorCode == 5 ) {
         errore_gestito = false;
     }else{
         page.reason = resourceError.errorString;
@@ -136,6 +171,8 @@ if(status === "success"){
 
 }
 
+
+console.log("finale parametri.test = " + parametri.test);
 mieUtility.log_righe_con_testo(3, 'FINE ESECUZIONE!!' );
 mieUtility.my_console_log(2);
 });
