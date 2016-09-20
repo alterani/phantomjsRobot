@@ -5,6 +5,7 @@ var mieUtility = require('/Users/enricoalterani/github/PhantomJs_fiera/modulo_ut
 var parametri = require('/Users/enricoalterani/github/PhantomJs_fiera/parametri.json'); // da cambiare path om ambiente linux
 var system = require('system');
 var page = require('webpage').create();
+var page2 = require('webpage').create();
 var fs = require("fs");
 var url = parametri.url;
 var utente = parametri.credenziali.user;
@@ -13,6 +14,8 @@ var errore_gestito = false;
 var step = 1;
 var contatore_enrico = 0;
 var path = 'localstorage/clienti.json';
+var LeadArray = new Array;
+var contatoreLead = 0;
 
 
 
@@ -58,18 +61,20 @@ page.onResourceRequested = function (requestData, networkRequest) {
 };
  */
 page.onLoadFinished = function(status) {
-    
-    system.stderr.writeLine('= onLoadFinished()');
-    system.stderr.writeLine('  status: ' + status);
+    if(parametri.log_dettaglio == 1){
+      system.stderr.writeLine('= onLoadFinished()');
+      system.stderr.writeLine('  status: ' + status);
+    }
     //console.log('Creazione rendering in corso ....');
     
     //Carico Jquery in locale
     page.injectJs('jquery.min.js');
 
-    console.log('slepping...');
+    if(parametri.log_dettaglio == 1){console.log('slepping...');}
+
     mieUtility.sleep(12000);
-    console.log('end sleep');
-    console.log(parametri.step);
+    if(parametri.log_dettaglio == 1){console.log('end sleep');}
+    if(parametri.log_dettaglio == 1){console.log(parametri.step);}
     
    parametri = page.evaluate(function(parametri){
             
@@ -106,8 +111,12 @@ page.onLoadFinished = function(status) {
                         // send click to element
                         //element.dispatchEvent(evento);
                     
-
-                        parametri.step = "4";
+                        if (parametri.numero_pagina_da_sfogliare < 9999)
+                        {parametri.step = "4";}
+                        else
+                        {
+                          parametri.step = "7";
+                        }
                         
                         return parametri;    
                     }
@@ -128,10 +137,10 @@ page.onLoadFinished = function(status) {
                       
                       return parametri;  
                     }
-                    if(parametri.step == "7"){
-                      parametri.step = "8";
-                      return parametri;  
-                    }
+
+
+                  
+                    
                     /*if($('form[name="frm_search"]').length > 0 && parametri.step == "4")
                     {
                         
@@ -164,7 +173,10 @@ page.onLoadFinished = function(status) {
 
     }, parametri);
 
-    
+   /*if(parametri.step == "no"){
+                      console.log("entratooooooooooooooooooooooooooooooooooooooo");
+                      return parametri;  
+   }*/
     
 
     //console.log("finale parametri.test = " + parametri.test + "STEP = " + parametri.step);
@@ -181,7 +193,7 @@ page.onLoadFinished = function(status) {
 
 page.onResourceError = function(resourceError) {
     
-    if (errore_gestito || resourceError.errorCode == 203 || resourceError.errorCode == 5 ) {
+    if (errore_gestito || resourceError.errorCode == 203 || resourceError.errorCode == 301 || resourceError.errorCode == 5 ) {
         errore_gestito = false;
     }else{
         page.reason = resourceError.errorString;
@@ -196,15 +208,17 @@ page.onResourceError = function(resourceError) {
 };
  
 page.onError = function(msg, trace) {
-    system.stderr.writeLine('= onError()');
-    var msgStack = ['  ERROR: ' + msg];
-    if (trace) {
-        msgStack.push('  TRACE:');
-        trace.forEach(function(t) {
-            msgStack.push('    -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function + '")' : ''));
-        });
-    }
-    system.stderr.writeLine(msgStack.join('\n'));
+  if(parametri.log_dettaglio == 1){
+        system.stderr.writeLine('= onError()');
+        var msgStack = ['  ERROR: ' + msg];
+        if (trace) {
+            msgStack.push('  TRACE:');
+            trace.forEach(function(t) {
+                msgStack.push('    -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function + '")' : ''));
+            });
+        }
+        system.stderr.writeLine(msgStack.join('\n'));
+  }
 };
 
 
@@ -346,7 +360,80 @@ setInterval(function(){
       }
     
     }
-   //console.log(parametri.step);
+    
+    ////////////////////////////////////////////////////
+    ///INIZIO FASE 2 CERCO CONTATTI E SCRIVO IN DATABASE
+    ////////////////////////////////////////////////////
+
+
+    if(parametri && parametri.step == "7"  )
+    {
+       parametri.step = "no";
+       //Se l'array non è ancora stato caricato lo carico in memoria
+       if (LeadArray.length == 0){
+          LeadArray = JSON.parse(fs.read(path));
+       }
+       
+       if(contatoreLead < LeadArray.length){
+         var url2 = 'http://www.expopage.net' + LeadArray[contatoreLead].Link;
+         
+
+         console.log("Sto aprendo ... "+url2);
+         //page.includeJs("https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js");
+         page.open(url2, function(status){
+              if(status === "success"){ 
+                console.log("Aperta Pagina : " + url2);
+
+                //Appena Caricata la pagina faccio evaluate
+                var elemento = LeadArray[contatoreLead]; 
+                elemento = page.evaluate(function(elemento){
+            
+                      // inizio codice evaluate dati
+
+                      elemento.caricato = true;
+                      return elemento;
+                    },elemento);
+                LeadArray[contatoreLead] = elemento;
+                
+                //CICLO setInterval che attende risposta di evaluate
+                setInterval(function(){
+                  if(LeadArray[contatoreLead].caricato == true){
+                      
+                      //inizio codice chiamata post
+                      console.log("ESISTE LeadArray[contatoreLead].caricato = " + LeadArray[contatoreLead].caricato);  
+                      //Riparte il ciclo principale
+                      contatoreLead++;
+                      parametri.step = 7;
+                      clearInterval();
+
+                  }
+
+                },250); //END setInterval
+
+               
+                //page.render('printscreen2.png');
+              } // FINE if(status === "success")
+              else {
+                console.log("ERRORE CARICAMENTO URL :" + url2);
+                parametri.step = "Fine";  
+              }
+        }); // fine page2.open(url, function(status)
+       } // if (contatoreLead < LeadArray.length)
+       else
+       {
+        console.log("ANAGRAFICHE LEAD CARICATE CON SUCCESSO");
+        parametri.step = "Fine";
+       }
+    } //END IF (parametri && parametri.step == "7"  )
+    
+
+    
+
+ 
+   
+   //////////////////////////////////////////////////////
+   //////// STEP FINALE ////////////////////////////////
+   /////////////////////////////////////////////////////
    if(parametri && (parametri.step == "8" || parametri.step == "Fine") ){
         
         page.render('printscreen.png');
