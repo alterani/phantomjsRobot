@@ -8,9 +8,11 @@ Naviga verso l'url di destinazione -->   DONE
 
 Compila i campi del form ed effettua la login -->  DONE
 
-Effettua una ricerca dalla form di ricerca --> TODO
+Effettua una ricerca dalla form di ricerca --> DONE
 
-Legge i dati risultanti dalla ricerca, scorre le pagine, archivia i dati in un database  --> TODO
+Legge i risultanti dalla ricerca, scorre le pagine, archivia i link in un file jno  --> DONE
+
+Apre tutti i link precedentemente scaricati e archivia le informazioni in un dtabase attraverso una chiamata REST API --> TODO
 
 
 
