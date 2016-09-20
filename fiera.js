@@ -5,11 +5,18 @@ var mieUtility = require('/Users/enricoalterani/github/PhantomJs_fiera/modulo_ut
 var parametri = require('/Users/enricoalterani/github/PhantomJs_fiera/parametri.json'); // da cambiare path om ambiente linux
 var system = require('system');
 var page = require('webpage').create();
+var fs = require("fs");
 var url = parametri.url;
 var utente = parametri.credenziali.user;
 var pwd = parametri.credenziali.pwd;
 var errore_gestito = false;
 var step = 1;
+var contatore_enrico = 0;
+var path = 'localstorage/clienti.json';
+
+
+
+
 
 //import * as gestionerrore from "gestione_errore";
 
@@ -18,7 +25,8 @@ var step = 1;
 page.onResourceRequested = function (requestData, networkRequest) {
     //system.stderr.writeLine('= onResourceRequested()');
     //system.stderr.writeLine('  request: ' + JSON.stringify(requestData, undefined, 4));
-    console.log('ID: ' + requestData.id + 'URL: ' + requestData.url);
+    if(parametri.log_dettaglio == 1)
+    {console.log('ID: ' + requestData.id + 'URL: ' + requestData.url);}
     
     //controllo se l'url è nell'elenco dei no load configurati nel file json
     var match = null;
@@ -53,7 +61,7 @@ page.onLoadFinished = function(status) {
     
     system.stderr.writeLine('= onLoadFinished()');
     system.stderr.writeLine('  status: ' + status);
-    console.log('Creazione rendering in corso ....');
+    //console.log('Creazione rendering in corso ....');
     
     //Carico Jquery in locale
     page.injectJs('jquery.min.js');
@@ -61,7 +69,7 @@ page.onLoadFinished = function(status) {
     console.log('slepping...');
     mieUtility.sleep(12000);
     console.log('end sleep');
-
+    console.log(parametri.step);
     
    parametri = page.evaluate(function(parametri){
             
@@ -89,18 +97,59 @@ page.onLoadFinished = function(status) {
                          return parametri;  
                     }
                     //Step3 clicca su tutte le aziende
-                    if($('a[href$="/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key="]').length > 0 && parametri.step == "2")
+                    if($('[href$="/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key="]').length > 0 && parametri.step == "2")
                     {
-                        parametri.step = "3"
-                        $('a[href$="/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key="]').submit();
+                        // find element to send click to
+                        // create a mouse click event
+                        //var evento = document.createEvent( 'MouseEvents' );
+                        //evento.initMouseEvent( 'click', true, true, window, 1, 0, 0 );
+                        // send click to element
+                        //element.dispatchEvent(evento);
+                    
+
+                        parametri.step = "4";
+                        
                         return parametri;    
                     }
 
-                    if(parametri.step == "3")
+                    if(parametri.step == "5"){
+                      
+                      if($('.form_titolo').length > 0){
+                        parametri.step = "6";
+
+                      }
+                      else if(parametri.numero_pagina_da_sfogliare > 1)
+                      {
+                        parametri.step = "Fine";
+                      }
+                      else{
+                        parametri.step = "4";  
+                      }  
+                      
+                      return parametri;  
+                    }
+                    if(parametri.step == "7"){
+                      parametri.step = "8";
+                      return parametri;  
+                    }
+                    /*if($('form[name="frm_search"]').length > 0 && parametri.step == "4")
                     {
-                        parametri.test = "Fase 4  ";
+                        
+                        parametri.test = "Fase 5";
+                        parametri.step = "4";
+                        $('form[name="frm_search"]').submit();   
+                        
                     } 
-                   
+                   if(parametri.test == "Fase 5" && parametri.step == "4")
+                    {
+                        
+                        parametri.test = "Fase 6";
+                        parametri.step = "6";
+                           
+                        
+                    }*/
+
+
                 }    
            }
 
@@ -116,11 +165,9 @@ page.onLoadFinished = function(status) {
     }, parametri);
 
     
-    page.render('printscreen.png');
+    
 
-    console.log('Creato file printscreen.png');
-
-    console.log("finale parametri.test = " + parametri.test + "STEP = " + parametri.step);
+    //console.log("finale parametri.test = " + parametri.test + "STEP = " + parametri.step);
     //phantom.exit();
 };
 
@@ -160,20 +207,165 @@ page.onError = function(msg, trace) {
     system.stderr.writeLine(msgStack.join('\n'));
 };
 
+
+////////////////////////////////////////////////////////////////
+////////////////// M A I N /////////////////////////////////////
+/////////// PUNTO DI PARTENZA //////////////////////////////////
+
 mieUtility.log_righe_con_testo(3, 'Apertura pagina in corso ....');
 page.open(url, function(status){
-
-if(status === "success"){ 
-	mieUtility.my_console_log(4);
-}else {
-	mieUtility.log_righe_con_testo(3, 'Pagina non raggiungibile!! ' + 'STATUS: ' + status );
-    mieUtility.log_righe_con_testo(3, "DETTAGLIO ERRORE \"" + page.reason_url + "\": " + page.reason );
-
-}
-
-
-console.log("finale parametri.test = " + parametri.test);
-mieUtility.log_righe_con_testo(3, 'FINE ESECUZIONE!!' );
-mieUtility.my_console_log(2);
+    if(status === "success"){ 
+    	mieUtility.my_console_log(4);
+    }
+    else {
+    	mieUtility.log_righe_con_testo(3, 'Pagina non raggiungibile!! ' + 'STATUS: ' + status );
+        mieUtility.log_righe_con_testo(3, "DETTAGLIO ERRORE \"" + page.reason_url + "\": " + page.reason );
+    }
 });
+
+// LOOP GENERALE DI CONTROLLO
+setInterval(function(){
+
+   if(parametri && parametri.step == "4")
+   {
+         
+      parametri.step = "5";
+
+
+     if (contatore_enrico == 0){ 
+       console.log("SPEP 5 LANCIA -- SPEP 5 LANCIA -- SPEP 5 LANCIA --");   
+       //page.open("http://expopage.net/portal/companySearchResults.do?CurrentPage=1&tbx_Search_Key=");
+       page.open("http://expopage.net/portal/advancedSearch.do?Frame2=exhibitor_advance_search");
+      
+     } //end if
+     if (contatore_enrico > 0  ){
+      console.log("STEP 5 LANCIA CON EVALUATE -- STEP 5 LANCIA CON EVALUATE --");
+        page.evaluate(function(){
+          subfun();
+          //checkDivVisibility("espositori");
+          //search();
+
+        }); //end page.evaluate
+     }//endif
+
+     contatore_enrico++;
+   }
+   
+   if(parametri && parametri.step == "6"  ){
+
+      console.log("ELABORAZIONE PAGINA NUMERO " + parametri.numero_pagina_da_sfogliare );
+      
+      parametri.step = 0;
+      
+      var arr_elenco_link = new Array();
+
+      arr_elenco_link = page.evaluate(function(arr_elenco_link){
+                        
+
+                        if($("a[href^='/portal/stand.do?eboothid=']").length > 0 ){
+                          //Scorro tutti gli attributi  
+                          $("a[href^='/portal/stand.do?eboothid=']").each(function(i){
+                             
+                             //$(this);
+                            //SE l'elemento non è già presente lo aggiunge in arrai  
+                            if(arr_elenco_link.indexOf($(this).attr('href')) == -1)
+                            {
+                              arr_elenco_link.push($(this).attr('href'));
+                            }
+
+                          }); //Fine each
+
+                        } //end if
+                        
+                        // se non ha caricato nessun link restituisco errore
+                        if(arr_elenco_link.length == 0)
+                        {
+                            arr_elenco_link.push("errore");
+                        } // end if
+                        return arr_elenco_link;
+                       }, arr_elenco_link); //end page.evaluate
+
+      
+      //Controllo se page.evaluate ha terminato e se ha restituito qualcosa
+      if(arr_elenco_link.length > 0 && arr_elenco_link[0] != "errore" )
+      {
+            
+            /////////////////////////////////////
+            //ARCHIVIO I LINK NEL FILE IN LOCALE
+            /////////////////////////////////////
+            var ClientiArray = new Array;
+            var codiceCliente = 0;
+
+            if(fs.exists(path)){
+              ClientiArray = JSON.parse(fs.read(path));
+              codiceCliente = ClientiArray.length;
+               
+            }
+            for (var i=0; i<arr_elenco_link.length; i++)
+            {  
+                    codiceCliente++;
+                    var recordCliente = {"Codice_cliente": codiceCliente, "Link": arr_elenco_link[i], "Pagina": parametri.numero_pagina_da_sfogliare};
+                    ClientiArray.push(recordCliente);
+                    
+            }
+            
+            //if(parametri.numero_pagina_da_sfogliare > 1377)
+            //{  
+                        fs.write(path, JSON.stringify(ClientiArray), 'w');
+            //}else
+            //{
+            //  parametri.numero_pagina_da_sfogliare = 1377;
+            //}
+            /////////////////////////////////////
+            //SFOGLIO LA PAGINA SUCCESSIVA
+            /////////////////////////////////////
+            parametri.numero_pagina_da_sfogliare++;
+            
+            if(parametri.numero_pagina_da_sfogliare < 1478)
+            {       
+                    parametri.step  = "5";
+                    
+                    parametri = page.evaluate(function(parametri){
+            
+                      setCurrentPage(parametri.numero_pagina_da_sfogliare.toString());
+
+                      return parametri;
+                    },parametri);
+            }else{
+
+                    console.log("Esportazione Link Terminata con successo!");
+                    parametri.step  = "Fine";
+            }
+
+
+      } else if (arr_elenco_link.length > 0 && arr_elenco_link[0] == "errore") // gestione errore
+      {
+
+        console.log("Errore su step 6 durante la lettura dei link!");
+        parametri.step  = "Fine";
+      }
+    
+    }
+   //console.log(parametri.step);
+   if(parametri && (parametri.step == "8" || parametri.step == "Fine") ){
+        
+        page.render('printscreen.png');
+        console.log('Creato file printscreen.png');
+        
+        console.log("finale parametri.test = " + parametri.test);
+        mieUtility.log_righe_con_testo(3, 'FINE ESECUZIONE!!' );
+        mieUtility.my_console_log(2);
+        window.setTimeout(function () {
+        console.log(page.frameUrl); //check url after click
+        }, 3000);
+
+        clearInterval();
+        phantom.exit();
+
+   }//end if 
+
+}, 250);//fine setInterval
+
+
+
 

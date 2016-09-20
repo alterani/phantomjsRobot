@@ -47,7 +47,17 @@ Per eseguire l'applicazione digitare:
 *************************************
 ##DESCRIZIONE FILE PARAMETRI.JSON
 ************************************
+<b>app_path</b> = Percorso dell'applicazione principale
+
 <b>url</b> = è l'url iniziale da cui parte lo script
+
+<b>test</b> = serve per funzionalità di debug lasciare a "no"
+
+<b>step</b> = Lascare a "1" regola il flusso di esecuzone del codice (non modificare)
+
+<b>numero_pagina_da_sfogliare</b> = Lasciare a 1 Si tratta del contatore per sfogliare le pagine dei risultati. Per modificarlo bisogna leggere nel codice.
+
+<b>log_dettaglio</b> = se valorizzato a 1 stampa il flusso di richieste http nella console. Se non è necessario visualizzare il flusso di richieste lasciare a 0
 
 <b>credenziali.user</b> = username che verrà iserita nella form
 

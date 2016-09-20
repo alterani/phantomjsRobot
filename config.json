@@ -10,7 +10,7 @@
   "diskCachePath": "cache",
 
   /* Same as: --max-disk-cache-size=1000 */
-  "maxDiskCacheSize": 100000,
+  "maxDiskCacheSize": 1000000,
 
   /* --cookies-file=/path/to/cookies.txt specifies the file name to store the persistent Cookies */
   "cookiesFile": "cookies.txt",
@@ -26,7 +26,11 @@
   "autoLoadImages": false,
 
   /* --debug=[true|false] prints additional warning and debug message, default is false.  */
-  "printDebugMessages": false
+  "printDebugMessages": false,
+
+  "offlineStoragePath": "/Users/enricoalterani/github/PhantomJs_fiera/localstorage",
+
+  "offlineStorageDefaultQuota": 1000
   
   /* etc. */
 }

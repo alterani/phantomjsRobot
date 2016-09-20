@@ -1,5 +1,10 @@
 {
+	"app_path": "/percorso_applicazione/",
 	"url": "http://www.esempiourl.com",
+	"test": "no",
+	"step": "1",
+	"numero_pagina_da_sfogliare": 1,
+	"log_dettaglio": 0,
 	"credenziali":{
 					
 					"user": "tuaUser",
