@@ -7,6 +7,7 @@ var system = require('system');
 var page = require('webpage').create();
 var page2 = require('webpage').create();
 var fs = require("fs");
+var fs2 = require("fs");
 var url = parametri.url;
 var utente = parametri.credenziali.user;
 var pwd = parametri.credenziali.pwd;
@@ -14,8 +15,11 @@ var errore_gestito = false;
 var step = 1;
 var contatore_enrico = 0;
 var path = 'localstorage/clienti.json';
+var path_anag = 'localstorage/schede_clienti/anagrafiche';
 var LeadArray = new Array;
-var contatoreLead = 129;
+var num_tentativi_prima_di_errore = 3;
+var errori_consecutivi = 0;
+var contatoreLead = 36898;
 
 
 
@@ -383,6 +387,7 @@ setInterval(function(){
          page.open(url2, function(status){
               if(status === "success"){ 
                 //console.log("Aperta Pagina : " + url2);
+                errori_consecutivi = 0;
 
                 //Appena Caricata la pagina faccio evaluate
                 var elemento = LeadArray[contatoreLead]; 
@@ -454,7 +459,7 @@ setInterval(function(){
                       
                       LeadArray[contatoreLead].stato = "In lavorazione";
 
-                      var pagepost = require('webpage').create(),
+                      /*var pagepost = require('webpage').create(),
                       server = 'http://localhost:27080/lead_db/contatti/_insert';
                       var data = 'docs=['+ JSON.stringify(LeadArray[contatoreLead]) +']';  
 
@@ -469,7 +474,12 @@ setInterval(function(){
                           LeadArray[contatoreLead].stato = "Errore Database";
                         }
                       }); //end pagepost.open
+                      */
 
+                      // SCRIVO IN UN FILE JSON IN MODALITA APPEND. OGNI 1000 RECORD GENERO UN NUOVO FILE
+                      fs2.touch(path_anag + Math.ceil(contatoreLead / 1000).toString() + ".json");
+                      fs2.write(path_anag + Math.ceil(contatoreLead / 1000).toString() + ".json", JSON.stringify(LeadArray[contatoreLead]) + ',', 'a');
+                      LeadArray[contatoreLead].stato = "Inserito";
                       
                   
 
@@ -521,9 +531,28 @@ setInterval(function(){
                
                 
               } // FINE if(status === "success")
-              else {
-                console.log("ERRORE CARICAMENTO URL :" + url2);
-                parametri.step = "Fine";  
+              else 
+              {
+                
+                if(errori_consecutivi <= num_tentativi_prima_di_errore )
+                {
+                    
+                    window.setTimeout(function () 
+                    {
+                    
+                      errori_consecutivi++;
+                      parametri.step = 7;
+                    
+                    }, 3000);
+                    
+                }else
+                {
+                  console.log("ERRORE CARICAMENTO URL :" + url2);
+                  console.log("");
+                  parametri.step = "Fine";  
+                }
+                
+                  
               }
         }); // fine page2.open(url, function(status)
        } // if (contatoreLead < LeadArray.length)
