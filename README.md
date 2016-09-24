@@ -39,7 +39,7 @@ Apre tutti i link precedentemente scaricati e archivia le informazioni in un dta
 ************************************
 Per eseguire l'applicazione digitare:
 
-<pre><code>./phantomjs --config=config.json fiera.js
+<pre><code>./phantomjs --config=config.json fieraV2.js
 </code></pre>
 
 
